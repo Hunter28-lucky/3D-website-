@@ -9,35 +9,35 @@ export default function FloatingVideo({ scrollPercent }) {
     const videoEndAt = 0.8;
     const videoDisappearAt = 0.85;
     const videoGoneAt = 0.95;
-    const videoStartDistance = 2000;
-    const videoStartScale = 2.5;
+    const videoStartDistance = 2000; // How far FROM THE FRONT the video starts
+    const videoStartScale = 2.5;     // How big the video starts (closer = bigger)
     const disappearDistance = 2000;
 
-    let videoZ = -videoStartDistance;
+    let videoZ = videoStartDistance; // Start IN FRONT (positive Z)
     let videoScale = videoStartScale;
     let videoOpacity = 0;
 
     if (scrollPercent < videoStartAt) {
-        // Not visible yet
+        // Not visible yet - video is in front of camera
         videoOpacity = 0;
-        videoZ = -videoStartDistance;
+        videoZ = videoStartDistance;
         videoScale = videoStartScale;
     } else if (scrollPercent >= videoStartAt && scrollPercent <= videoEndAt) {
-        // Transitioning IN
+        // Transitioning IN - coming FROM the front, moving back to center
         const progress = (scrollPercent - videoStartAt) / (videoEndAt - videoStartAt);
-        videoZ = -videoStartDistance + progress * videoStartDistance;
-        videoScale = videoStartScale - progress * (videoStartScale - 1);
+        videoZ = videoStartDistance - progress * videoStartDistance; // From +2000 to 0
+        videoScale = videoStartScale - progress * (videoStartScale - 1); // From 2.5 to 1
         const fadeProgress = Math.pow(progress, 1.5);
         videoOpacity = fadeProgress;
     } else if (scrollPercent > videoEndAt && scrollPercent < videoDisappearAt) {
-        // Fully visible
+        // Fully visible at center
         videoZ = 0;
         videoScale = 1;
         videoOpacity = 1;
     } else if (scrollPercent >= videoDisappearAt && scrollPercent <= videoGoneAt) {
-        // Transitioning OUT
+        // Transitioning OUT - moving back into distance
         const disappearProgress = (scrollPercent - videoDisappearAt) / (videoGoneAt - videoDisappearAt);
-        videoZ = -disappearProgress * disappearDistance;
+        videoZ = -disappearProgress * disappearDistance; // Goes to -2000 (back)
         videoScale = 1 - disappearProgress * 0.5;
         videoOpacity = 1 - disappearProgress;
     } else {
