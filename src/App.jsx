@@ -3,7 +3,6 @@ import BackgroundVideo from './components/BackgroundVideo';
 import HeroSection from './components/HeroSection';
 import Navbar from './components/Navbar';
 import FloatingVideo from './components/FloatingVideo';
-import BentoGrid from './components/BentoGrid';
 import './index.css';
 
 function App() {
@@ -36,9 +35,6 @@ function App() {
 
       {/* Floating Video */}
       <FloatingVideo scrollPercent={scrollPercent} />
-
-      {/* Bento Grid (appears after hero) */}
-      <BentoGrid scrollPercent={scrollPercent} />
 
       {/* Scroll Progress Indicator */}
       <div className="glass fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full flex items-center gap-4">
