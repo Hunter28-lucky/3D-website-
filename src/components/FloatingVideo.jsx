@@ -77,7 +77,7 @@ export default function FloatingVideo({ scrollPercent }) {
                     transform: `translateZ(${videoZ}px) scale(${Math.max(videoScale, 0.1)})`,
                     opacity: Math.max(videoOpacity, 0),
                     boxShadow: '0 25px 80px rgba(0, 212, 255, 0.25), 0 10px 30px rgba(0, 212, 255, 0.15)',
-                    transition: 'transform 0.1s ease-out, opacity 0.1s ease-out',
+                    willChange: 'transform, opacity',
                 }}
                 onClick={handlePlayPause}
             >

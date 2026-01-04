@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import './Navbar.css';
 
 export default function Navbar() {
     const containerRef = useRef(null);
@@ -31,11 +32,18 @@ export default function Navbar() {
     }, []);
 
     return (
-        <nav className="glass fixed top-5 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full flex items-center gap-8">
+        <nav
+            className="glass fixed top-5 left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 rounded-full flex items-center justify-center gap-3"
+            style={{
+                width: 'fit-content',
+                boxShadow: '0 0 15px rgba(0, 212, 255, 0.4), inset 0 0 10px rgba(0, 212, 255, 0.1)',
+                border: '1px solid rgba(0, 212, 255, 0.3)',
+            }}
+        >
             {/* Logo */}
             <div className="flex items-center gap-2">
                 <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                    className="w-6 h-6 rounded-md flex items-center justify-center text-xs"
                     style={{
                         background: 'rgba(0, 212, 255, 0.1)',
                         border: '1px solid rgba(0, 212, 255, 0.3)',
@@ -45,7 +53,7 @@ export default function Navbar() {
                     ◆
                 </div>
                 <span
-                    className="text-lg font-bold tracking-widest"
+                    className="text-sm font-bold tracking-widest"
                     style={{ fontFamily: "'Orbitron', sans-serif", color: 'var(--text)' }}
                 >
                     NEXUS
@@ -53,12 +61,12 @@ export default function Navbar() {
             </div>
 
             {/* Nav Links */}
-            <div className="hidden md:flex gap-8">
+            <div className="hidden md:flex gap-4">
                 {['Home', 'About', 'Work', 'Contact'].map((link) => (
                     <a
                         key={link}
                         href="#"
-                        className="text-sm font-medium transition-colors hover:text-white"
+                        className="text-xs font-medium transition-colors hover:text-white"
                         style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-body)' }}
                     >
                         {link}
@@ -69,7 +77,7 @@ export default function Navbar() {
             {/* Eye Button */}
             <div
                 ref={containerRef}
-                className="w-11 h-11 relative ml-2 flex items-center justify-center"
+                className="w-8 h-8 relative flex items-center justify-center"
             >
                 <div
                     className="w-full h-full rounded-full flex items-center justify-center"

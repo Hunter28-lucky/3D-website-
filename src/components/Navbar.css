@@ -1,0 +1,42 @@
+.navbar-glow {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated glowing border - constrained to navbar shape */
+.navbar-glow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(0, 212, 255, 0.8) 25%,
+            rgba(0, 102, 255, 0.6) 50%,
+            rgba(0, 212, 255, 0.8) 75%,
+            transparent 100%);
+    background-size: 200% 100%;
+    animation: borderFlow 3s linear infinite;
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+@keyframes borderFlow {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Hover enhancement */
+.navbar-glow:hover::before {
+    animation-duration: 2s;
+}

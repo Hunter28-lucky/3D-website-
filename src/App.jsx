@@ -1,27 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import BackgroundVideo from './components/BackgroundVideo';
 import HeroSection from './components/HeroSection';
 import Navbar from './components/Navbar';
 import FloatingVideo from './components/FloatingVideo';
 import MagicBento from './components/MagicBento';
+import FloatingLines from './components/FloatingLines';
 import './index.css';
+
+// Lerp function for smooth interpolation
+const lerp = (start, end, factor) => start + (end - start) * factor;
 
 function App() {
   const [scrollPercent, setScrollPercent] = useState(0);
+  const targetScrollRef = useRef(0);
+  const currentScrollRef = useRef(0);
+  const rafRef = useRef(null);
 
   useEffect(() => {
+    // Update target scroll on actual scroll
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const percent = Math.min(scrollTop / docHeight, 1);
-      setScrollPercent(percent);
+      targetScrollRef.current = Math.min(scrollTop / docHeight, 1);
+    };
+
+    // Lerp animation loop for smooth scroll
+    const animate = () => {
+      // Lerp factor: 0.12 = responsive but smooth (was 0.08 which was laggy)
+      currentScrollRef.current = lerp(currentScrollRef.current, targetScrollRef.current, 0.12);
+
+      // Update state for re-render
+      setScrollPercent(currentScrollRef.current);
+
+      rafRef.current = requestAnimationFrame(animate);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll(); // Initial call
+    rafRef.current = requestAnimationFrame(animate);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []); // Empty dependency - only run once
 
   return (
     <div className="relative">
@@ -42,9 +64,9 @@ function App() {
         // Timing: appear after hero text (15%), disappear before video (45%)
         const bentoStartAt = 0.22;
         const bentoFullAt = 0.30;
-        const bentoHoldUntil = 0.35;
+        const bentoHoldUntil = 0.47;
         const bentoGoneAt = 0.50;
-        const startDistance = 2000;
+        const startDistance = 500;
         const startScale = 0.5;
 
         let bentoZ = -startDistance;
@@ -107,8 +129,59 @@ function App() {
         );
       })()}
 
+      {/* FloatingLines Background - appears after video disappears */}
+      {(() => {
+        // Timing: appear right after video goes (85%), smooth blend in
+        const linesStartAt = 0.85;  // Start earlier, right as video fades
+        const linesFullAt = 0.98;   // Longer transition for smooth blend
+
+        let linesOpacity = 0;
+
+        if (scrollPercent < linesStartAt) {
+          // Not visible yet
+          linesOpacity = 0;
+        } else if (scrollPercent >= linesStartAt && scrollPercent <= linesFullAt) {
+          // Smooth fade in with easeInOut curve
+          const progress = (scrollPercent - linesStartAt) / (linesFullAt - linesStartAt);
+          // Smoother easing: cubic ease-in-out
+          linesOpacity = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        } else {
+          // Fully visible
+          linesOpacity = 1;
+        }
+
+        return (
+          <div
+            className="fixed inset-0"
+            style={{
+              zIndex: 30,
+              pointerEvents: 'auto',
+              opacity: linesOpacity,
+              willChange: 'opacity',
+              cursor: 'default',
+            }}
+          >
+            <FloatingLines
+              enabledWaves={['top', 'middle', 'bottom']}
+              lineCount={11}
+              lineDistance={14.5}
+              bendRadius={30}
+              bendStrength={15}
+              animationSpeed={2}
+              interactive
+              mouseDamping={0.05}
+              parallax
+              parallaxStrength={0.2}
+              mixBlendMode="normal"
+            />
+          </div>
+        );
+      })()}
+
       {/* Scroll Progress Indicator */}
-      <div className="glass fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-full flex items-center gap-4">
+      <div className="glass fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-8 py-4 rounded-full flex items-center gap-4">
         <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full"
